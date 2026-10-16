@@ -315,6 +315,27 @@ $spectateurs = 0;
 
     <div class="sizes">
         <?php
+        for ($i = 0; $i < count($pointures); $i++) {
+            if ($stocks[$i] == 0) {
+                $class_infos = "class='size--soldout'" ;
+                $size_infos_text = "Epuisé" ;
+            }
+            else if ($stocks[$i] <= 3 && $stocks[$i] >= 1) {
+                $class_infos = "class='size--low'" ;
+                $size_infos_text = "Plus que $stocks[$i]" ;
+            }
+            else {
+                $class_infos = null ;
+                $size_infos_text = "Disponible" ;
+            }
+
+            ($pointures[$i] == $pointureStar) ? $class_star = "class=\"size--star\"" : $class_star = null ;
+
+            echo ('<div class="size">
+                        <p class="size__eu">'.$pointures[$i].'</p>
+                        <p '.$class_infos.' '.$class_star.'>'.$size_infos_text.'</p>
+                    </div>') ;
+        }
         // TODO 6 : avec une boucle, affichez UNE carte par pointure.
         //
         //   Modèle d'une carte :
