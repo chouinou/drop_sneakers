@@ -339,7 +339,7 @@ $spectateurs = 0;
         // TODO 6 : avec une boucle, affichez UNE carte par pointure.
         //
         //   Modèle d'une carte :
-        //   <div class="size CLASSE">
+        //   <div class="size">
         //       <p class="size__eu">42</p>
         //       <p class="size__label">TEXTE</p>
         //   </div>
@@ -360,11 +360,18 @@ $spectateurs = 0;
             <p class="section__num">03 — L'histoire</p>
             <h2 class="section__title">Du croquis au drop</h2>
         </div>
-        <p class="section__desc"><?php // TODO 7 : le nombre d'étapes (count) ?> étapes pour créer la <?= $modele ?>.</p>
+        <p class="section__desc"><?= count($etapes) ?> étapes pour créer la <?= $modele ?>.</p>
     </div>
 
     <div class="timeline">
         <?php
+        foreach ($etapes as $key => $etape) {
+            $key_reel = $key + 1 ;
+            echo ("<div class=\"step\">
+                        <div class=\"step__num\">$key_reel</div>
+                        <p class=\"step__text\">$etape</p>
+                    </div>") ;
+        }
         // TODO 7 : avec un foreach, affichez une carte par étape, numérotée à partir de 1.
         //
         //   Modèle d'une carte :
