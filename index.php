@@ -255,7 +255,6 @@ $spectateurs = 0;
 <section class="hero">
     <div>
         <p class="hero__kicker">Drop <strong><?= $numeroAffiche ?></strong> · Édition limitée</p>
-
         <h1 class="hero__title">
             <?= $marque ?>
             <span class="outline"><?= $modele ?></span>
@@ -266,20 +265,17 @@ $spectateurs = 0;
 
         <span class="status status--<?= $statut ?>"><?= $statutTexte ?></span>
 
-        <?php // TODO 4 : n'afficher le compte à rebours QUE si le statut est "bientot" ?>
+        <?php if ($statut == "bientot"): ?>
             <div class="countdown">
                 <div class="countdown__box"><span class="countdown__value"><?= $jours ?></span><span class="countdown__label">jours</span></div>
                 <div class="countdown__box"><span class="countdown__value"><?= $heures ?></span><span class="countdown__label">heures</span></div>
                 <div class="countdown__box"><span class="countdown__value"><?= $minutes ?></span><span class="countdown__label">minutes</span></div>
             </div>
-        <?php // TODO 4 : fin de la condition ?>
-
-        <?php
-        // TODO 4 : n'afficher le bouton QUE si le drop n'est pas "soldout".
-        //          Son texte : "Commander" si le statut est "live", sinon "Pré-commander".
-        ?>
-        <a href="#commande" class="cta">Pré-commander</a>
-    </div>
+        <?php endif; ?>
+        <?php if ($statut != "soldout"): ?>
+            <a href="#commande" class="cta"><?php echo ($statut == 'live') ? 'Pré-commander' : 'Commander';?></a>
+        <?php endif; ?>
+     </div>
 
     <div class="visual">
         <div class="visual__ring"></div>
