@@ -7,7 +7,6 @@ if (isset($_GET['reset'])) {
     exit;
 }
 
-
 // =====================================================================
 //  LES DONNÉES DU DROP (fournies - vous pouvez les modifier pour tester)
 // =====================================================================
@@ -44,22 +43,23 @@ $maxParPersonne = 2;
 // =====================================================================
 // TODO 1.1 : $nomComplet doit contenir la marque, un espace, puis le modèle.
 //            → "Street Feet Nova Runner"
-$nomComplet = "";
+$nomComplet = "$marque $modele";
 
 // TODO 1.2 : $numeroAffiche doit contenir "#" suivi du numéro sur 3 chiffres.
 //            → "#001"
 //            Indice : str_pad($numeroDrop, 3, "0", STR_PAD_LEFT)
-$numeroAffiche = "";
+$numeroAffiche = str_pad($numeroDrop, 3, "0", STR_PAD_LEFT);
 
 // TODO 1.3 : $prixAffiche doit contenir le prix au format français.
 //            → "189,90 €"
 //            Indice : number_format($prix, 2, ',', ' ')
-$prixAffiche = "";
+$prixAffiche = number_format($prix,2, ',', ' ')."€";
 
 // TODO 1.4 : descendez dans le HTML et remplacez chaque commentaire « TODO 1.4 »
 //            par un affichage de la bonne variable (avec la balise courte =)
 //            → topbar, titre, coloris, prix, récapitulatif, footer…
-
+$annee = date("Y") ;
+$date_temps = date("d/m/Y").date("H:i:s");
 
 // =====================================================================
 //  MISSION 2 — Le compte à rebours (calculs)
@@ -67,13 +67,13 @@ $prixAffiche = "";
 // TODO 2.1 : calculez le nombre de secondes entre maintenant et le drop.
 //            Indices : strtotime($dateDrop) donne la date du drop en secondes,
 //                      time() donne l'instant présent en secondes.
-$secondesRestantes = 0;
+$secondesRestantes = strtotime($dateDrop) - time() ;
 
-$jours = 0;
-$heures = 0;
-$minutes = 0;
+$jours = floor($secondesRestantes/86400) ;
+$heures = floor((fmod($secondesRestantes, 86400)/3600)) ;
+$minutes = floor(fmod($heures,3600)/60) ;
 
-// TODO 2.2 : SI il reste du temps (> 0), calculez :
+// TODO 2.2 : SI il reste du temps (> 0), calculez :    
 //            - $jours   : combien de fois 86400 secondes (1 jour) ?
 //            - $heures  : avec le RESTE des jours (%), combien de fois 3600 ?
 //            - $minutes : avec le reste des heures, combien de fois 60 ?
@@ -83,11 +83,39 @@ $minutes = 0;
 // =====================================================================
 //  MISSION 3 — Analyse du stock (boucle)
 // =====================================================================
+
 $stockTotal       = 0;   // nombre total de paires
 $nbPointuresDispo = 0;   // nombre de pointures avec au moins 1 paire
 $maxStock         = 0;   // le plus gros stock
 $pointureStar     = 0;   // la pointure qui a le plus gros stock
 
+// function analyseStock() {
+//     for ($i = 0; $i < count($pointures); $i++) {
+//         $stockTotal += $stocks[$i] ;
+//         if ($stocks[$i] != 0) {
+//             $nbPointuresDispo++;
+//             }
+
+//         if ($stocks[$i] > $maxStock) {
+//             $maxStock = $stocks[$i];
+//             $pointureStar = $pointures[$i];
+//             }
+// }
+// }
+
+// analyseStock() ;
+
+for ($i = 0; $i < count($pointures); $i++) {
+        $stockTotal += $stocks[$i] ;
+        if ($stocks[$i] != 0) {
+            $nbPointuresDispo++;
+            }
+
+        if ($stocks[$i] > $maxStock) {
+            $maxStock = $stocks[$i];
+            $pointureStar = $pointures[$i];
+            }
+}
 // TODO 3 : avec UNE SEULE boucle for qui parcourt les deux tableaux
 //          ($pointures et $stocks), calculez les 4 variables ci-dessus.
 //          Indice : for ($i = 0; $i < count($pointures); $i++) { ... }
@@ -102,9 +130,19 @@ $pointureStar     = 0;   // la pointure qui a le plus gros stock
 //   - sinon, le drop n'a pas commencé → "bientot" / "Bientôt disponible"
 //   - sinon                        → "live"    / "En vente maintenant"
 //   ⚠️ L'ordre des conditions compte !
-$statut = "bientot";
-$statutTexte = "Statut à calculer";
 
+if ($stockTotal == 0) {
+    $statut = "soldout" ;
+    $statutTexte ="Sold out" ;
+}
+else if ($secondesRestantes != 0) {
+    $statut = "bientot" ;
+    $statutTexte = "Bientôt disponible";
+}
+else {
+    $statut = "live" ;
+    $statutTexte = "En vente maintenant" ;
+}
 
 // =====================================================================
 //  MISSION 8 — La commande (formulaire POST)
@@ -183,17 +221,16 @@ $spectateurs = 0;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php // TODO 1.4 : le nom complet ?> — Drop <?php // TODO 1.4 : le numéro affiché ?></title>
+    <title><?= $nomComplet ?> — Drop <?= $numeroDrop ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<!-- TODO 1.4 : la couleur de la page vient de PHP → remplacez #c6ff00 par la variable $couleur -->
-<body style="--accent: #c6ff00">
 
-<!-- ================= TOPBAR ================= -->
+<body style="--accent: #c6ff00"> 
+
 <header class="topbar">
-    <a href="index.php" class="logo"><?php // TODO 1.4 : la marque ?> <span>Drops</span></a>
+    <a href="index.php" class="logo"><?= $marque ?> <span>Drops</span></a>
     <div class="topbar__infos">
         <span class="live-dot"><?= $spectateurs ?> personnes regardent</span>
         <span>
@@ -207,9 +244,9 @@ $spectateurs = 0;
 <div class="marquee" aria-hidden="true">
     <div class="marquee__track">
         <?php
-        // TODO 5 : avec une boucle for, affichez 10 fois cette bande défilante :
-        //   <span class="marquee__item">Drop #001 ✦ Nova Runner ✦ Midnight Volt ✦</span>
-        //   (en remplaçant #001, Nova Runner et Midnight Volt par les variables)
+            for ($i = 1; $i <= 10; $i++) {
+                echo ("<span class='marquee__item'>Drop $numeroAffiche ✦ $modele ✦ $coloris ✦</span>") ;
+            }
         ?>
     </div>
 </div>
@@ -217,15 +254,15 @@ $spectateurs = 0;
 <!-- ================= HERO ================= -->
 <section class="hero">
     <div>
-        <p class="hero__kicker">Drop <strong><?php // TODO 1.4 : le numéro affiché ?></strong> · Édition limitée</p>
+        <p class="hero__kicker">Drop <strong><?= $numeroAffiche ?></strong> · Édition limitée</p>
 
         <h1 class="hero__title">
-            <?php // TODO 1.4 : la marque ?>
-            <span class="outline"><?php // TODO 1.4 : le modèle ?></span>
+            <?= $marque ?>
+            <span class="outline"><?= $modele ?></span>
         </h1>
 
-        <p class="hero__colorway">Coloris <strong><?php // TODO 1.4 : le coloris ?></strong></p>
-        <p class="hero__price"><?php // TODO 1.4 : le prix affiché ?></p>
+        <p class="hero__colorway">Coloris <strong><?= $coloris ?></strong></p>
+        <p class="hero__price"><?= $prixAffiche ?></p>
 
         <span class="status status--<?= $statut ?>"><?= $statutTexte ?></span>
 
@@ -306,7 +343,7 @@ $spectateurs = 0;
             <p class="section__num">03 — L'histoire</p>
             <h2 class="section__title">Du croquis au drop</h2>
         </div>
-        <p class="section__desc"><?php // TODO 7 : le nombre d'étapes (count) ?> étapes pour créer la <?php // TODO 1.4 : le modèle ?>.</p>
+        <p class="section__desc"><?php // TODO 7 : le nombre d'étapes (count) ?> étapes pour créer la <?= $modele ?>.</p>
     </div>
 
     <div class="timeline">
@@ -431,9 +468,9 @@ $spectateurs = 0;
         </form>
 
         <aside class="recap">
-            <div class="recap__line"><span class="muted">Modèle</span><strong><?php // TODO 1.4 : le nom complet ?></strong></div>
-            <div class="recap__line"><span class="muted">Coloris</span><strong><?php // TODO 1.4 : le coloris ?></strong></div>
-            <div class="recap__line"><span class="muted">Prix</span><strong class="accent"><?php // TODO 1.4 : le prix affiché ?></strong></div>
+            <div class="recap__line"><span class="muted">Modèle</span><strong><?= $nomComplet ?></strong></div>
+            <div class="recap__line"><span class="muted">Coloris</span><strong><?= $coloris ?></strong></div>
+            <div class="recap__line"><span class="muted">Prix</span><strong class="accent"><?= $prixAffiche?></strong></div>
             <div class="recap__perks">
                 <p>🚚 Livraison offerte dès <?= $seuilLivraison ?> €</p>
                 <p>🔁 Retours gratuits sous 30 jours</p>
@@ -447,9 +484,9 @@ $spectateurs = 0;
 
 <!-- ================= FOOTER ================= -->
 <footer class="footer">
-    <p class="footer__big"><?php // TODO 1.4 : le modèle ?></p>
-    <span>© <?php // TODO 1.4 : l'année en cours avec date('Y') ?> <?php // TODO 1.4 : la marque ?> — Projet pédagogique PHP</span>
-    <span>Page générée le <?php // TODO 1.4 : la date et l'heure (date('d/m/Y à H:i')) ?></span>
+    <p class="footer__big"><?= $modele ?></p>
+    <span>© <?= $annee ?> <?= $marque ?> — Projet pédagogique PHP</span>
+    <span>Page générée le <?= $date_temps ?></span>
 </footer>
 
 </body>
